@@ -24,10 +24,37 @@
 <body>
 
   <div class="container">
-    Hello World!
+    <div class="header">
+      <div id="cliqueId">
+        Your Clique ID is: ...
+      </div>
+      <div>
+        <label>
+          <input placeholder="Enter a friend's clique ID here." />
+        </label>
+      </div>
+    </div>
+    <div class="player--container">
+      <button onclick="previous()">
+        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+          <path d="M20 .755l-14.374 11.245 14.374 11.219-.619.781-15.381-12 15.391-12 .609.755z"/>
+        </svg>
+      </button>
+      <div class="player">
+        <video controls autoplay muted>
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <button onclick="next()">
+        <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd">
+          <path d="M4 .755l14.374 11.245-14.374 11.219.619.781 15.381-12-15.391-12-.609.755z"/>
+        </svg>
+      </button>
+    </div>
   </div>
 
 
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <script src="../js/service-worker.js"></script>
   <script src="../js/vendor/modernizr-3.11.2.min.js"></script>
   <script src="../js/plugins.js"></script>
