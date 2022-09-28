@@ -1,7 +1,10 @@
 const url = "http://127.0.0.1:5000";
 const tag = "funny";
-const count = 1;
-let offset = 0;
+const count = 25;
+let index = 0;
+let offset = 1;
+let urls = [];
+
 const peer = new peerjs.Peer();
 peer.on('open', (id) => {
   document.getElementById("cliqueId").innerText = "Your Clique ID is: " + id;
@@ -10,7 +13,14 @@ let connection;
 
 peer.on('connection', (connection) => {
   connection.on('data', (data) => {
-    replaceContent(data.url);
+    if (null != data.urls) {
+      urls = data.urls;
+      index = 0;
+    }
+    if (null != data.index) {
+      index = data.index;
+    }
+    replaceContent(url + "/videos/" + urls[index]);
   });
 });
 
@@ -22,22 +32,38 @@ function replaceContent(url) {
 }
 
 function initialization() {
-  offset = 0;
+  offset = 1;
   getVideos();
 }
 
 function next() {
-  offset += 1;
-  deleteVideos().then(() => {
-    getVideos();
-  });
+  index += 1;
+  if (index > 25) {
+    index = 0;
+    offset += 25;
+    deleteVideos().then(() => {
+      getVideos();
+    });
+  }
+  replaceContent(url + "/videos/" + urls[index]);
+  if (null != connection) {
+    connection.send({index: index});
+  }
 }
 
 function previous() {
-  offset -= 1;
-  deleteVideos().then(() => {
-    getVideos();
-  });
+  index -= 1;
+  if (index < 0) {
+    offset -= 25;
+    index = 24;
+    deleteVideos().then(() => {
+      getVideos();
+    });
+  }
+  replaceContent(url + "/videos/" + urls[index]);
+  if (null != connection) {
+    connection.send({index: index});
+  }
 }
 
 function deleteVideos() {
@@ -51,8 +77,9 @@ function getVideos() {
     .then(res => {
       res.json().then(body => {
         replaceContent(url + "/videos/" + body.urls[0]);
+        urls = body.urls;
         if (null != connection) {
-          connection.send({url: url + "/videos/" + body.urls[0]});
+          connection.send({urls: body.urls});
         }
       });
     });

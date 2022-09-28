@@ -7,6 +7,10 @@
   align-items: center;
 }
 
+video {
+  max-width: 36em;
+}
+
 .player {
   width: 36em;
   height: 64em;
