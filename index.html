@@ -1,0 +1,66 @@
+<!doctype html>
+<html class="no-js" lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>CliqueTok</title>
+  <meta name="description" content="Community viewer for TikTok">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta property="og:title" content="">
+  <meta property="og:type" content="">
+  <meta property="og:url" content="">
+  <meta property="og:image" content="">
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="img/icon.png">
+
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/main.css">
+
+  <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="player">
+      <video controls autoplay muted>
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+
+  <div class="modal--container" id="modal--container">
+    <div class="modal">
+      <div>
+        Your Clique ID is:
+      </div>
+      <div id="cliqueId">
+        ...
+      </div>
+      <div>
+        <label>
+          <input placeholder="Enter a friend's clique ID here." />
+        </label>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+  <script src="js/vendor/modernizr-3.11.2.min.js"></script>
+  <script src="js/vendor/swiped-events.min.js"></script>
+  <script src="js/plugins.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+  </script>
+
+</body>
+
+</html>

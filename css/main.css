@@ -5,31 +5,39 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  background-color: black;
 }
 
 video {
-  max-width: 36em;
+  object-fit: cover;
 }
 
 .player {
-  width: 36em;
-  height: 64em;
-  border: solid black 2px;
-}
-
-.player--container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 50%;
-  height: 90%;
-}
-
-.header {
   width: 100%;
-  height: 10%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  width: 20em;
+  height: 20em;
+  padding: 1em;
+  border-radius: 5px;
+  background-color: whitesmoke;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal--container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
   justify-content: center;
   align-items: center;
 }

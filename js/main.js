@@ -7,7 +7,7 @@ let urls = [];
 
 const peer = new peerjs.Peer();
 peer.on('open', (id) => {
-  document.getElementById("cliqueId").innerText = "Your Clique ID is: " + id;
+  document.getElementById("cliqueId").innerText = id;
 });
 let connection;
 
@@ -87,6 +87,7 @@ function getVideos() {
 
 function establishPeerConnection(id) {
   connection = peer.connect(id);
+  document.getElementById("modal--container").style.display = "none";
 }
 
 const peerInput = document.querySelector("input");
@@ -100,6 +101,14 @@ peerInput.onkeypress = (input) => {
     establishPeerConnection(peerInput.value);
   }
 };
+
+document.addEventListener('swiped-up', () => {
+  next();
+});
+
+document.addEventListener('swiped-down', () => {
+  previous();
+});
 
 
 initialization();
