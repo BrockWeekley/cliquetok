@@ -67,7 +67,7 @@ function previous() {
 }
 
 function deleteVideos() {
-  return fetch("http://127.0.0.1:5000/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset, {
+  return fetch(url + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset, {
     method: 'DELETE'
   });
 }
@@ -85,8 +85,20 @@ function getVideos() {
     });
 }
 
+function checkSafari() {
+  let seemsChrome = navigator.userAgent.indexOf("Chrome") > -1;
+  let seemsSafari = navigator.userAgent.indexOf("Safari") > -1;
+  return seemsSafari && !seemsChrome;
+}
+
+let peerOptions = {};
+
+if (checkSafari()) {
+  peerOptions.serialization = "json";
+}
+
 function establishPeerConnection(id) {
-  connection = peer.connect(id);
+  connection = peer.connect(id, peerOptions);
   document.getElementById("modal--container").style.display = "none";
 }
 
