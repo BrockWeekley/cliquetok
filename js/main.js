@@ -5,6 +5,7 @@ const count = 25;
 let index = 0;
 let offset = 1;
 let urls = [];
+let swipeAllowed = true;
 
 const peer = new peerjs.Peer();
 peer.on('open', (id) => {
@@ -21,6 +22,13 @@ peer.on('connection', (connection) => {
     if (null != data.index) {
       index = data.index;
     }
+    if (null != data.spin) {
+      if (data.spin === "true") {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
+    }
     replaceContent(url + "/videos/" + urls[index]);
   });
 });
@@ -30,6 +38,16 @@ function replaceContent(newUrl) {
   video.pause();
   video.setAttribute('src', newUrl);
   video.play();
+}
+
+function setLoading(status) {
+  if (status) {
+    swipeAllowed = false;
+    document.getElementsByClassName("spinner--container")[0].style.display = "inline";
+  } else {
+    swipeAllowed = true;
+    document.getElementsByClassName("spinner--container")[0].style.display = "none";
+  }
 }
 
 function initialization() {
@@ -44,11 +62,14 @@ function next() {
     offset += 25;
     deleteVideos().then(() => {
       getVideos();
+    }).catch(() => {
+      setLoading(false);
+      connection?.send({spin: "false"});
     });
   }
   replaceContent(url + "/videos/" + urls[index]);
   if (null != connection) {
-    connection.send({index: index});
+    connection?.send({index: index});
   }
 }
 
@@ -59,31 +80,42 @@ function previous() {
     index = 24;
     deleteVideos().then(() => {
       getVideos();
+    }).catch(() => {
+      setLoading(false);
+      connection?.send({spin: "false"});
     });
   }
   replaceContent(url + "/videos/" + urls[index]);
-  if (null != connection) {
-    connection.send({index: index});
-  }
+  connection?.send({index: index});
 }
 
 function deleteVideos() {
+  setLoading(true);
+  connection?.send({spin: "true"});
   return fetch(url + port + "/api/v1/videos", {
     method: 'DELETE'
   });
 }
 
 function getVideos() {
+  setLoading(true);
+  connection?.send({spin: "true"});
   fetch(url + port + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset)
     .then(res => {
       res.json().then(body => {
         replaceContent(url + "/videos/" + body.urls[0]);
         urls = body.urls;
-        if (null != connection) {
-          connection.send({urls: body.urls});
-        }
+        setLoading(false);
+        connection?.send({urls: body.urls, spin: "false"});
+      }).catch(() => {
+        setLoading(false);
+        connection?.send({spin: "false"});
       });
-    });
+    }).catch(() => {
+    setLoading(false);
+    connection?.send({spin: "false"});
+
+  });
 }
 
 function checkSafari() {
@@ -116,11 +148,15 @@ peerInput.onkeypress = (input) => {
 };
 
 document.addEventListener('swiped-up', () => {
-  next();
+  if (swipeAllowed) {
+    next();
+  }
 });
 
 document.addEventListener('swiped-down', () => {
-  previous();
+  if (swipeAllowed) {
+    previous();
+  }
 });
 
 
