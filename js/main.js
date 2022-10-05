@@ -1,4 +1,5 @@
 const url = "http://127.0.0.1:5000";
+const port = "";
 const tag = "funny";
 const count = 25;
 let index = 0;
@@ -24,10 +25,10 @@ peer.on('connection', (connection) => {
   });
 });
 
-function replaceContent(url) {
+function replaceContent(newUrl) {
   const video = document.querySelector("video");
   video.pause();
-  video.setAttribute('src', url);
+  video.setAttribute('src', newUrl);
   video.play();
 }
 
@@ -67,13 +68,13 @@ function previous() {
 }
 
 function deleteVideos() {
-  return fetch(url + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset, {
+  return fetch(url + port + "/api/v1/videos", {
     method: 'DELETE'
   });
 }
 
 function getVideos() {
-  fetch(url + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset)
+  fetch(url + port + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset)
     .then(res => {
       res.json().then(body => {
         replaceContent(url + "/videos/" + body.urls[0]);
