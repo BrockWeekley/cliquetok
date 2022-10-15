@@ -13,12 +13,12 @@ let connection;
 
 peer.on('connection', (connection) => {
   connection.on('data', (data) => {
+    if (null != data.index) {
+      index = data.index;
+    }
     if (null != data.urls) {
       urls = data.urls;
       replaceContent(urls[index]);
-    }
-    if (null != data.index) {
-      index = data.index;
     }
     if (null != data.spin) {
       if (data.spin === "true") {
@@ -27,7 +27,7 @@ peer.on('connection', (connection) => {
         setLoading(false);
       }
     }
-    replaceContent(url + "/videos/" + urls[index]);
+    replaceContent(urls[index]);
   });
 });
 
@@ -103,6 +103,9 @@ if (checkSafari()) {
 function establishPeerConnection(id) {
   connection = peer.connect(id, peerOptions);
   document.getElementById("modal--container").style.display = "none";
+  connection.on("open", () => {
+    connection.send({urls: urls, index: index});
+  });
 }
 
 const peerInput = document.querySelector("input");
