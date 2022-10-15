@@ -1,8 +1,6 @@
-const url = "http://127.0.0.1:5000";
-const tag = "funny";
-const count = 25;
+const url = "http://127.0.0.1:5001";
+let tag = "funny";
 let index = 0;
-let offset = 1;
 let urls = [];
 
 const peer = new peerjs.Peer();
@@ -15,37 +13,28 @@ peer.on('connection', (connection) => {
   connection.on('data', (data) => {
     if (null != data.urls) {
       urls = data.urls;
-      index = 0;
+      replaceContent(urls[index]);
     }
-    if (null != data.index) {
-      index = data.index;
-    }
-    replaceContent(url + "/videos/" + urls[index]);
   });
 });
 
-function replaceContent(url) {
+function replaceContent(foundUrl) {
   const video = document.querySelector("video");
   video.pause();
-  video.setAttribute('src', url);
+  video.setAttribute('src', foundUrl);
   video.play();
 }
 
 function initialization() {
-  offset = 1;
   getVideos();
 }
 
 function next() {
   index += 1;
-  if (index > 25) {
-    index = 0;
-    offset += 25;
-    deleteVideos().then(() => {
-      getVideos();
-    });
+  if (index > 5) {
+    getVideos();
   }
-  replaceContent(url + "/videos/" + urls[index]);
+  replaceContent(urls[index]);
   if (null != connection) {
     connection.send({index: index});
   }
@@ -53,30 +42,22 @@ function next() {
 
 function previous() {
   index -= 1;
-  if (index < 0) {
-    offset -= 25;
-    index = 24;
-    deleteVideos().then(() => {
-      getVideos();
-    });
+  if (index < 1) {
+    getVideos();
   }
-  replaceContent(url + "/videos/" + urls[index]);
+  replaceContent(urls[index]);
   if (null != connection) {
     connection.send({index: index});
   }
 }
 
-function deleteVideos() {
-  return fetch(url + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset, {
-    method: 'DELETE'
-  });
-}
-
 function getVideos() {
-  fetch(url + "/api/v1/videos?tag=" + tag + "&count=" + count + "&offset=" + offset)
+  index = 0;
+  fetch(url + "/api/v2/getVideos?tag=" + tag)
     .then(res => {
       res.json().then(body => {
-        replaceContent(url + "/videos/" + body.urls[0]);
+        debugger;
+        replaceContent(body.urls[0]);
         urls = body.urls;
         if (null != connection) {
           connection.send({urls: body.urls});
