@@ -1,6 +1,6 @@
 const url = "http://127.0.0.1:5001";
 const port = "";
-let tag = "funny";
+let tag = "comedy";
 let index = 0;
 let urls = [];
 let swipeAllowed = true;
@@ -75,20 +75,17 @@ function getVideos() {
   connection?.send({spin: "true"});
   index = 0;
   fetch(url + port + "/api/v2/getVideos?tag=" + tag)
-    .then(res => {
-      res.json().then(body => {
+    .then(res => res.json())
+      .then(body => {
         replaceContent(body.urls[0]);
         urls = body.urls;
         setLoading(false);
         connection?.send({urls: body.urls, spin: "false"});
-      }).catch(() => {
+      })
+      .catch(() => {
         setLoading(false);
         connection?.send({spin: "false"});
       });
-    }).catch(() => {
-    setLoading(false);
-    connection?.send({spin: "false"});
-  });
 }
 
 function checkSafari() {
