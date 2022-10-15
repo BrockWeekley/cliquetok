@@ -18,7 +18,6 @@
 
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/main.css">
-
   <meta name="theme-color" content="#fafafa">
 </head>
 
@@ -26,7 +25,7 @@
 
   <div class="container">
     <div class="player">
-      <video controls autoplay muted>
+      <video controls autoplay muted width="100%">
         Your browser does not support the video tag.
       </video>
     </div>
@@ -42,12 +41,15 @@
       </div>
       <div>
         <label>
-          <input placeholder="Enter a friend's clique ID here." />
+          <input class="idInput" placeholder="Enter a friend's clique ID here." />
         </label>
       </div>
     </div>
   </div>
 
+  <div class="spinner--container">
+    <img class="spinner" src="img/Spinner.svg" alt="spinner" />
+  </div>
 
   <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
   <script src="js/vendor/modernizr-3.11.2.min.js"></script>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@600&display=swap');
+
 .container {
   width: 100%;
   height: 100%;
@@ -20,6 +22,20 @@ video {
   align-items: center;
 }
 
+.spinner {
+  width: 100%;
+  height: 100%;
+}
+
+.spinner--container {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, .5);
+  display: none;
+}
+
 .modal {
   width: 20em;
   height: 20em;
@@ -37,9 +53,18 @@ video {
   top: 0;
   width: 100%;
   height: 100%;
+  font-family: 'Figtree', sans-serif;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.idInput {
+  width: 18em;
+}
+
+.idInput::placeholder {
+  text-align: center;
 }
 
 

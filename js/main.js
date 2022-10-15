@@ -1,7 +1,9 @@
 const url = "http://127.0.0.1:5001";
+const port = "";
 let tag = "funny";
 let index = 0;
 let urls = [];
+let swipeAllowed = true;
 
 const peer = new peerjs.Peer();
 peer.on('open', (id) => {
@@ -15,14 +17,35 @@ peer.on('connection', (connection) => {
       urls = data.urls;
       replaceContent(urls[index]);
     }
+    if (null != data.index) {
+      index = data.index;
+    }
+    if (null != data.spin) {
+      if (data.spin === "true") {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
+    }
+    replaceContent(url + "/videos/" + urls[index]);
   });
 });
 
-function replaceContent(foundUrl) {
+function replaceContent(newUrl) {
   const video = document.querySelector("video");
   video.pause();
-  video.setAttribute('src', foundUrl);
+  video.setAttribute('src', newUrl);
   video.play();
+}
+
+function setLoading(status) {
+  if (status) {
+    swipeAllowed = false;
+    document.getElementsByClassName("spinner--container")[0].style.display = "inline";
+  } else {
+    swipeAllowed = true;
+    document.getElementsByClassName("spinner--container")[0].style.display = "none";
+  }
 }
 
 function initialization() {
@@ -35,9 +58,7 @@ function next() {
     getVideos();
   }
   replaceContent(urls[index]);
-  if (null != connection) {
-    connection.send({index: index});
-  }
+  connection?.send({index: index});
 }
 
 function previous() {
@@ -46,24 +67,28 @@ function previous() {
     getVideos();
   }
   replaceContent(urls[index]);
-  if (null != connection) {
-    connection.send({index: index});
-  }
+  connection?.send({index: index});
 }
 
 function getVideos() {
+  setLoading(true);
+  connection?.send({spin: "true"});
   index = 0;
-  fetch(url + "/api/v2/getVideos?tag=" + tag)
+  fetch(url + port + "/api/v2/getVideos?tag=" + tag)
     .then(res => {
       res.json().then(body => {
-        debugger;
         replaceContent(body.urls[0]);
         urls = body.urls;
-        if (null != connection) {
-          connection.send({urls: body.urls});
-        }
+        setLoading(false);
+        connection?.send({urls: body.urls, spin: "false"});
+      }).catch(() => {
+        setLoading(false);
+        connection?.send({spin: "false"});
       });
-    });
+    }).catch(() => {
+    setLoading(false);
+    connection?.send({spin: "false"});
+  });
 }
 
 function checkSafari() {
@@ -96,11 +121,15 @@ peerInput.onkeypress = (input) => {
 };
 
 document.addEventListener('swiped-up', () => {
-  next();
+  if (swipeAllowed) {
+    next();
+  }
 });
 
 document.addEventListener('swiped-down', () => {
-  previous();
+  if (swipeAllowed) {
+    previous();
+  }
 });
 
 
