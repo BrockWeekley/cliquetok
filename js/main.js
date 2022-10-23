@@ -8,7 +8,8 @@ let swipeAllowed = true;
 let existingId = localStorage.getItem('peerjs-id');
 
 let connection;
-let peer = createNewPeerInstance();
+let peer;
+peer = createNewPeerInstance();
 peerOpen();
 peerError();
 peerConnection();
@@ -64,6 +65,7 @@ function peerConnection() {
 }
 
 function createNewPeerInstance() {
+  peer?.disconnect();
   return new peerjs.Peer(existingId, {
     debug: 3,
     config: { 'iceServers': [
