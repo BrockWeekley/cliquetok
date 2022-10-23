@@ -163,7 +163,7 @@ function establishPeerConnection() {
   connection = peer.connect(id, peerOptions);
   setModal(false);
   connection?.on("open", () => {
-    connection.send({urls: urls, index: index});
+    connection.send({urls: urls, user: document.getElementById("userInput").value, index: index});
   });
 }
 
