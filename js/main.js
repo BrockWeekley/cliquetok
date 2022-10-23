@@ -86,6 +86,9 @@ function setLoading(status) {
   if (status) {
     swipeAllowed = false;
     spinner.style.display = "inline";
+    setTimeout(() => {
+      setLoading(false);
+    }, 30000);
   } else {
     swipeAllowed = true;
     spinner.style.display = "none";
