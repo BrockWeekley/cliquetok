@@ -57,6 +57,9 @@ function peerConnection() {
       }
       replaceContent(urls[index]);
     });
+    connection.on('close', () => {
+      disablePeerConnection();
+    })
   });
 }
 
