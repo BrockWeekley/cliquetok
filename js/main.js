@@ -59,7 +59,7 @@ function peerConnection() {
     });
     connection.on('close', () => {
       disablePeerConnection();
-    })
+    });
   });
 }
 
