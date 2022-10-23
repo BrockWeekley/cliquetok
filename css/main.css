@@ -22,6 +22,42 @@ video {
   align-items: center;
 }
 
+.connection-status {
+  position: absolute;
+  top: 1em;
+  left: 1em;
+  width: 6em;
+  height: 1.5em;
+  background-color: whitesmoke;
+  opacity: .8;
+}
+
+.connected {
+  width: 1.5em;
+  display: none;
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+
+.disconnected {
+  width: 1.5em;
+  display: inline;
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(0deg) brightness(118%) contrast(119%);
+}
+
+#connectedUser {
+  color: black;
+  font-size: .5em;
+}
+
+.copy {
+  width: 2em;
+  cursor: pointer;
+}
+
+.copy:active {
+  filter: invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+
 .spinner {
   width: 100%;
   height: 100%;
@@ -36,15 +72,33 @@ video {
   display: none;
 }
 
+.open--icon {
+  width: 2em;
+}
+
+.modal__open {
+  width: 3em;
+  height: 3em;
+  position: absolute;
+  top: 1em;
+  right: 1em;
+  background-color: white;
+  border-radius: 4px;
+  opacity: .8;
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
 .modal {
-  width: 20em;
+  width: 22em;
   height: 20em;
   padding: 1em;
   border-radius: 5px;
   background-color: whitesmoke;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -59,12 +113,88 @@ video {
   align-items: center;
 }
 
-.idInput {
-  width: 18em;
+.modal--inner {
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.idInput::placeholder {
+.close {
+  width: 100%;
+  height: 5%;
+  text-align: end;
+}
+
+.close--icon {
+  width: 1em;
+  filter: invert(48%) sepia(79%) saturate(0%) hue-rotate(0deg) brightness(118%) contrast(119%);
+}
+
+.close--inner {
+  cursor: pointer;
+  font-size: 1.2em;
+  color: grey;
+}
+
+.current-id {
+  all: unset;
+  width: 22em;
+}
+
+.clique-id {
   text-align: center;
+}
+
+label {
+  width: 100%;
+}
+
+input {
+  width: 100%;
+}
+
+input::placeholder {
+  text-align: center;
+}
+
+button {
+  width: 8em;
+  height: 2em;
+  border: 0;
+  border-radius: 4px;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 1em;
+  margin-left: 1em;
+}
+
+.connect {
+  background-color: #6d82b1;
+}
+
+.disconnect {
+  background-color: #a3945d;
+}
+
+.field {
+  width: 100%;
+  height: 2em;
+  font-size: 16px;
+  border: 0;
+  border-bottom: 1px solid lightgrey;
+  border-radius: 4px;
+  outline-color: rgb(84 105 212 / 0.5);
+  background-color: rgb(255, 255, 255);
+  box-shadow: rgba(0, 0, 0, 0) 0 0 0 0,
+  rgba(0, 0, 0, 0) 0 0 0 0,
+  rgba(0, 0, 0, 0) 0 0 0 0,
+  rgba(60, 66, 87, 0.16) 0 0 0 1px,
+  rgba(0, 0, 0, 0) 0 0 0 0,
+  rgba(0, 0, 0, 0) 0 0 0 0,
+  rgba(0, 0, 0, 0) 0 0 0 0;
 }
 
 

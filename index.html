@@ -31,29 +31,46 @@
     </div>
   </div>
 
+  <div class="connection-status">
+    <img id="connected" class="connected" src="img/connected.svg" alt="connected" />
+    <img id="disconnected" class="disconnected" src="img/disconnected.svg" alt="disconnected" />
+    <span id="connectedUser">No Connection</span>
+  </div>
+
+  <div id="modalOpener" class="modal__open" onclick="setModal(true)">
+    <img class="open--icon" src="img/dropdown.svg" alt="menu_open" />
+  </div>
+
   <div class="modal--container" id="modal--container">
     <div class="modal">
-      <div>
-        Your Clique ID is:
+      <div class="close">
+        <span class="close--inner" onclick="setModal(false)">
+          <img class="close--icon" src="img/x.svg" alt="close" />
+        </span>
       </div>
-      <div id="cliqueId">
-        ...
-      </div>
-      <div>
-        <label>
-          <input class="nameInput" placeholder="Enter your username here." />
-        </label>
-      </div>
+      <div class="modal--inner">
+        <div class="clique-id">
+          Your Clique ID is:<br />
+          <label for="cliqueId"></label>
+          <input class="current-id" id="cliqueId" value="..." disabled>
 
-      <div>
-        <label>
-          <input class="idInput" placeholder="Enter a friend's clique ID here." />
-        </label>
-        <button>Connect</button>
-        <button>Disconnect</button>
-      </div>
-      <div>
+          <img class="copy" onclick="copyId()" src="img/copy.svg" alt="copy" />
 
+        </div>
+
+
+        <label>
+          <input class="field" placeholder="Enter your username here." />
+        </label>
+
+        <label>
+          <input id="idInput" class="field" placeholder="Enter a friend's clique ID here." />
+        </label>
+
+        <div>
+          <button class="connect" onclick="establishPeerConnection()">Connect</button>
+          <button class="disconnect" onclick="disablePeerConnection()">Disconnect</button>
+        </div>
       </div>
     </div>
   </div>

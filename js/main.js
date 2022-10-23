@@ -10,29 +10,26 @@ if (existingId === "") {
   existingId = null;
 }
 
-let peer = new peerjs.Peer(existingId, {
-  config: { 'iceServers': [
-      { 'url': 'stun:stun.l.google.com:19302' }
-    ] }
-});
+let connection;
+let peer = createNewPeerInstance();
+
 peer.on('open', (id) => {
-  document.getElementById("cliqueId").innerText = id;
+  document.getElementById("cliqueId").value = id;
   if (id !== existingId) {
     localStorage.setItem('peerjs-id', id);
     existingId = id;
   }
 });
+
 peer.on('error', () => {
   setLoading(true);
-  peer = new peerjs.Peer(existingId, {
-    config: { 'iceServers': [
-        { 'url': 'stun:stun.l.google.com:19302' }
-      ] }
+  setConnection(false);
+  peer = createNewPeerInstance();
+  peer.on('open', () => {
+    console.log("Successfully reestablished connection");
+    setLoading(false);
   });
-  setLoading(false);
 });
-
-let connection;
 
 peer.on('connection', (connection) => {
   connection.on('data', (data) => {
@@ -42,6 +39,9 @@ peer.on('connection', (connection) => {
     if (null != data.urls) {
       urls = data.urls;
       replaceContent(urls[index]);
+    }
+    if (null != data.user) {
+      setConnection(true, data.user);
     }
     if (null != data.spin) {
       if (data.spin === "true") {
@@ -54,6 +54,15 @@ peer.on('connection', (connection) => {
   });
 });
 
+function createNewPeerInstance() {
+  return new peerjs.Peer(existingId, {
+    debug: 3,
+    config: { 'iceServers': [
+        { 'url': 'stun:stun.l.google.com:19302' }
+      ] }
+  });
+}
+
 function replaceContent(newUrl) {
   const video = document.querySelector("video");
   video.pause();
@@ -62,17 +71,14 @@ function replaceContent(newUrl) {
 }
 
 function setLoading(status) {
+  const spinner = document.getElementsByClassName("spinner--container")[0];
   if (status) {
     swipeAllowed = false;
-    document.getElementsByClassName("spinner--container")[0].style.display = "inline";
+    spinner.style.display = "inline";
   } else {
     swipeAllowed = true;
-    document.getElementsByClassName("spinner--container")[0].style.display = "none";
+    spinner.style.display = "none";
   }
-}
-
-function initialization() {
-  getVideos();
 }
 
 function next() {
@@ -111,27 +117,67 @@ function getVideos() {
       });
 }
 
+function copyId() {
+  const copyText = document.getElementById("cliqueId");
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+  navigator.clipboard.writeText(copyText.value);
+}
+
+function setModal(open) {
+  if (open) {
+    document.getElementById("modal--container").style.display = "flex";
+    document.getElementById("modalOpener").style.display = "none";
+  } else {
+    document.getElementById("modal--container").style.display = "none";
+    document.getElementById("modalOpener").style.display = "flex";
+  }
+}
+
+function setConnection(status, user) {
+  const connected = document.getElementById("connected");
+  const disconnected = document.getElementById("disconnected");
+  const userFound = document.getElementById("connectedUser");
+  if (status) {
+    connected.style.display = "inline";
+    disconnected.style.display = "none";
+    if (user != null && user !== "") {
+      userFound.innerText = user;
+    } else {
+      userFound.innerText = "Connected";
+    }
+  } else {
+    connected.style.display = "none";
+    disconnected.style.display = "inline";
+    userFound.innerText = "No Connection";
+  }
+}
+
 let peerOptions = {};
 
 peerOptions.serialization = "json";
 
-function establishPeerConnection(id) {
+function establishPeerConnection() {
+  const id = document.getElementById("idInput").value;
   connection = peer.connect(id, peerOptions);
-  document.getElementById("modal--container").style.display = "none";
+  setModal(false);
   connection?.on("open", () => {
     connection.send({urls: urls, index: index});
   });
 }
 
-const peerInput = document.querySelector("input");
+function disablePeerConnection() {
+  connection?.close();
+  localStorage.setItem("peerjs-id", null);
+  peer = createNewPeerInstance();
+  setConnection(false);
+}
 
-peerInput.onblur = () => {
-  establishPeerConnection(peerInput.value);
-};
-
+const peerInput = document.getElementById("idInput");
 peerInput.onkeypress = (input) => {
   if (input.key === "Enter") {
-    establishPeerConnection(peerInput.value);
+    establishPeerConnection();
   }
 };
 
@@ -147,5 +193,9 @@ document.addEventListener('swiped-down', () => {
   }
 });
 
+
+function initialization() {
+  getVideos();
+}
 
 initialization();
