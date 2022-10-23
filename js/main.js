@@ -5,10 +5,33 @@ let index = 0;
 let urls = [];
 let swipeAllowed = true;
 
-const peer = new peerjs.Peer();
+let existingId = localStorage.getItem('peerjs-id');
+if (existingId === "") {
+  existingId = null;
+}
+
+let peer = new peerjs.Peer(existingId, {
+  config: { 'iceServers': [
+      { 'url': 'stun:stun.l.google.com:19302' }
+    ] }
+});
 peer.on('open', (id) => {
   document.getElementById("cliqueId").innerText = id;
+  if (id !== existingId) {
+    localStorage.setItem('peerjs-id', id);
+    existingId = id;
+  }
 });
+peer.on('error', () => {
+  setLoading(true);
+  peer = new peerjs.Peer(existingId, {
+    config: { 'iceServers': [
+        { 'url': 'stun:stun.l.google.com:19302' }
+      ] }
+  });
+  setLoading(false);
+});
+
 let connection;
 
 peer.on('connection', (connection) => {
@@ -88,22 +111,14 @@ function getVideos() {
       });
 }
 
-function checkSafari() {
-  let seemsChrome = navigator.userAgent.indexOf("Chrome") > -1;
-  let seemsSafari = navigator.userAgent.indexOf("Safari") > -1;
-  return seemsSafari && !seemsChrome;
-}
-
 let peerOptions = {};
 
-if (checkSafari()) {
-  peerOptions.serialization = "json";
-}
+peerOptions.serialization = "json";
 
 function establishPeerConnection(id) {
   connection = peer.connect(id, peerOptions);
   document.getElementById("modal--container").style.display = "none";
-  connection.on("open", () => {
+  connection?.on("open", () => {
     connection.send({urls: urls, index: index});
   });
 }
