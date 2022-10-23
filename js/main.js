@@ -170,6 +170,7 @@ function establishPeerConnection() {
 function disablePeerConnection() {
   connection?.close();
   localStorage.setItem("peerjs-id", null);
+  existingId = null;
   peer = createNewPeerInstance();
   setConnection(false);
 }
