@@ -28,8 +28,6 @@ function peerError() {
   peer.on('error', () => {
     setLoading(true);
     setConnection(false);
-    existingId = "";
-    localStorage.setItem('peerjs-id', "");
     peer = createNewPeerInstance();
     peerOpen();
     peerError();
