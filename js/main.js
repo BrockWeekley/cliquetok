@@ -6,53 +6,61 @@ let urls = [];
 let swipeAllowed = true;
 
 let existingId = localStorage.getItem('peerjs-id');
-if (existingId === "") {
-  existingId = null;
-}
 
 let connection;
 let peer = createNewPeerInstance();
+peerOpen();
+peerError();
+peerConnection();
 
-peer.on('open', (id) => {
-  document.getElementById("cliqueId").value = id;
-  if (id !== existingId) {
-    localStorage.setItem('peerjs-id', id);
-    existingId = id;
-  }
-});
-
-peer.on('error', () => {
-  setLoading(true);
-  setConnection(false);
-  peer = createNewPeerInstance();
+function peerOpen() {
   peer.on('open', (id) => {
     document.getElementById("cliqueId").value = id;
+    if (id !== existingId) {
+      localStorage.setItem('peerjs-id', id);
+      existingId = id;
+    }
     setLoading(false);
   });
-});
+}
 
-peer.on('connection', (connection) => {
-  connection.on('data', (data) => {
-    if (null != data.index) {
-      index = data.index;
-    }
-    if (null != data.urls) {
-      urls = data.urls;
-      replaceContent(urls[index]);
-    }
-    if (null != data.user) {
-      setConnection(true, data.user);
-    }
-    if (null != data.spin) {
-      if (data.spin === "true") {
-        setLoading(true);
-      } else {
-        setLoading(false);
-      }
-    }
-    replaceContent(urls[index]);
+function peerError() {
+  peer.on('error', () => {
+    setLoading(true);
+    setConnection(false);
+    existingId = "";
+    localStorage.setItem('peerjs-id', "");
+    peer = createNewPeerInstance();
+    peerOpen();
+    peerError();
+    peerConnection();
   });
-});
+}
+
+function peerConnection() {
+  peer.on('connection', (connection) => {
+    connection.on('data', (data) => {
+      if (null != data.index) {
+        index = data.index;
+      }
+      if (null != data.urls) {
+        urls = data.urls;
+        replaceContent(urls[index]);
+      }
+      if (null != data.user) {
+        setConnection(true, data.user);
+      }
+      if (null != data.spin) {
+        if (data.spin === "true") {
+          setLoading(true);
+        } else {
+          setLoading(false);
+        }
+      }
+      replaceContent(urls[index]);
+    });
+  });
+}
 
 function createNewPeerInstance() {
   return new peerjs.Peer(existingId, {
@@ -169,9 +177,12 @@ function establishPeerConnection() {
 
 function disablePeerConnection() {
   connection?.close();
-  localStorage.setItem("peerjs-id", null);
-  existingId = null;
+  localStorage.setItem("peerjs-id", "");
+  existingId = "";
   peer = createNewPeerInstance();
+  peerOpen();
+  peerError();
+  peerConnection();
   setConnection(false);
 }
 
