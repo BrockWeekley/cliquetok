@@ -25,8 +25,8 @@ peer.on('error', () => {
   setLoading(true);
   setConnection(false);
   peer = createNewPeerInstance();
-  peer.on('open', () => {
-    console.log("Successfully reestablished connection");
+  peer.on('open', (id) => {
+    document.getElementById("cliqueId").value = id;
     setLoading(false);
   });
 });
